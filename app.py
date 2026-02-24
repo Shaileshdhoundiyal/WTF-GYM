@@ -1,6 +1,7 @@
 import os
 import uvicorn
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
 from src.graph import app_graph
@@ -16,7 +17,13 @@ app = FastAPI(
 )
 
 
-@app.websocket("/")
+@app.get("/")
+async def serve_frontend():
+    """Serve the chat UI."""
+    return FileResponse(os.path.join(os.path.dirname(__file__), "index.html"))
+
+
+@app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """WebSocket endpoint for the WTF GYM chatbot."""
 
